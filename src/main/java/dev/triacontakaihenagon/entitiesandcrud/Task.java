@@ -1,6 +1,7 @@
 package dev.triacontakaihenagon.entitiesandcrud;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +18,7 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank
     private String title;
     private boolean done;
     private LocalDateTime createdAt;

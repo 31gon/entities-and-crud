@@ -1,9 +1,10 @@
 package dev.triacontakaihenagon.entitiesandcrud;
 
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/tasks")
@@ -20,17 +21,24 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    public Optional<Task> getTask(@PathVariable Long id) {
-        return taskService.getTaskById(id);
+    public ResponseEntity<Task> getTask(@PathVariable Long id) {
+        return taskService.getTaskById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Task postTasks(@RequestBody Task task) {
+    public Task postTasks(@RequestBody @Valid Task task) {
         return taskService.createTask(task);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
         taskService.deleteTask(id);
+    }
+
+    @PutMapping("/{id}")
+    public Task updateTask(@PathVariable Long id, @RequestBody @Valid Task task) {
+        return taskService.updateTask(id, task);
     }
 }
