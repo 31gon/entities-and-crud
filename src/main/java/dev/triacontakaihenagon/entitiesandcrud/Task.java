@@ -15,10 +15,13 @@ public class Task {
     public Task() {
     }
 
+    public Task(TaskRequest request) {
+        this.title = request.getTitle();
+        this.done = request.isDone();
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
     private String title;
     private boolean done;
     private LocalDateTime createdAt;

@@ -4,6 +4,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -16,20 +18,24 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<Task> getTasks() {
-        return taskService.getAllTask();
+    public List<TaskResponse> getTasks() {
+        return taskService.getAllTask().stream()
+                .map(TaskResponse::new)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTask(@PathVariable Long id) {
+    public ResponseEntity<TaskResponse> getTask(@PathVariable Long id) {
         return taskService.getTaskById(id)
+                .map(TaskResponse::new)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Task postTasks(@RequestBody @Valid Task task) {
-        return taskService.createTask(task);
+    public TaskResponse postTasks(@RequestBody @Valid TaskRequest taskRequest) {
+        Task task = new Task(taskRequest);
+        return new TaskResponse(taskService.createTask(task));
     }
 
     @DeleteMapping("/{id}")
@@ -38,7 +44,8 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Long id, @RequestBody @Valid Task task) {
-        return taskService.updateTask(id, task);
+    public TaskResponse updateTask(@PathVariable Long id,@RequestBody @Valid TaskRequest taskRequest) {
+        Task task = new Task(taskRequest);
+        return new TaskResponse (taskService.updateTask(id, task));
     }
 }
